@@ -1,0 +1,26 @@
+units		lj
+boundary	s s s
+atom_style	molecular
+read_data	onechain.dat
+####
+neighbor	3 bin
+neigh_modify	every 10 one 10000
+
+bond_style      harmonic
+bond_coeff	1 500 1.0
+angle_style     harmonic
+angle_coeff	1 2 180.0
+pair_style	lj/cut 1.12
+pair_coeff	1 1 1.0 1.0 1.12
+pair_modify     shift yes
+special_bonds   lj 0.5 0.5 0.5
+variable	t equal 0.8
+thermo_style	custom step evdwl cpu
+thermo          500
+thermo_modify   lost error
+timestep	0.0003
+dump		1 all xyz 1000 dump.xyz
+minimize 	0 0 10000 100000
+velocity 	all create $t 1110 dist gaussian mom yes rot yes units box
+fix		1 all nvt temp $t $t 10
+run             500000
